@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">blockchain-demo</string>
+    <string name="toolbar_title">Blockchain Demo</string>
 </resources>
