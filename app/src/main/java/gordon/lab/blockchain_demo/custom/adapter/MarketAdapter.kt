@@ -1,5 +1,6 @@
 package gordon.lab.blockchain_demo.custom.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -31,16 +32,17 @@ class MarketAdapter: RecyclerView.Adapter<PriceItemViewHolder>() {
         return dataModel.size
     }
 
-    fun setDataModel(mUserItems: List<MarketPricesItem>) {
-        dataModel.addAll(mUserItems)
+    fun setDataModel(Items: List<MarketPricesItem>) {
+        dataModel.addAll(Items)
         notifyDataSetChanged()
     }
 
-    fun setLoadMore( setLoadMoreCall: (() -> Unit)? = null) {
-        onLoadMoreCall = setLoadMoreCall
-    }
+    fun updateNewModelItem(item : MarketPricesItem){
+        dataModel.add(0,item)
+        val newList = dataModel.slice(0..39)
+        dataModel.clear()
+        dataModel.addAll(newList)
+        notifyDataSetChanged()
 
-    fun setOnItemClick(setItemLick: KFunction1<String, Unit>? = null) {
-        onItemClick = setItemLick
     }
 }

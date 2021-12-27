@@ -1,6 +1,7 @@
 package gordon.lab.blockchain_demo.custom.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,18 +12,27 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import gordon.lab.blockchain_demo.Constants.NORMAL_CLOSURE_STATUS
 import gordon.lab.blockchain_demo.custom.adapter.MarketAdapter
 import gordon.lab.blockchain_demo.custom.protocol.MainEvent
 import gordon.lab.blockchain_demo.custom.protocol.MainState
 import gordon.lab.blockchain_demo.data.model.MarketPrices
+import gordon.lab.blockchain_demo.data.model.MarketPricesItem
 import gordon.lab.blockchain_demo.databinding.FragmentMarketPricesBinding
 import gordon.lab.blockchain_demo.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okio.ByteString
 
 class MarketListFragment:Fragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private var binding: FragmentMarketPricesBinding ?= null
     private var priceAdapter = MarketAdapter()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,14 +49,14 @@ class MarketListFragment:Fragment() {
             initViewModelObserve()
             lifecycleScope.launch {
                 viewModel.setEvent(MainEvent.FetchList)
+
+                viewModel.setEvent(MainEvent.ObserverList(echoWebSocketListener))
             }
         }
     }
 
     private fun FragmentMarketPricesBinding.initUserRecycler() {
         marketList.adapter = priceAdapter
-//        priceAdapter.setLoadMore(viewModel::fetchUserList)
-//        userListAdapter.setOnItemClick(::onUserItemClick)
         marketList.layoutManager = LinearLayoutManager(context)
         marketList.addItemDecoration(DividerItemDecoration(context,DividerItemDecoration.VERTICAL))
     }
@@ -62,11 +72,11 @@ class MarketListFragment:Fragment() {
                         progressBar.isVisible = it.mainState.isLoading
                     }
                     is MainState.FetchedData->{
-//                        userListAdapter.setDataModel(it.userListState.result.userList)
+                        priceAdapter.setDataModel(it.mainState.marketPrices)
                         progressBar.isVisible =  it.mainState.isLoading
                     }
                     is MainState.ObserverData->{
-//                        userListAdapter.setDataModel(it.userListState.result.userList)
+                        priceAdapter.setDataModel(it.mainState.marketPrices)
                         progressBar.isVisible =  it.mainState.isLoading
                     }
                     is MainState.Error->{
@@ -75,6 +85,28 @@ class MarketListFragment:Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private val echoWebSocketListener = object: WebSocketListener() {
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            webSocket.close(NORMAL_CLOSURE_STATUS, null)
+            output("Closing : $code / $reason")
+        }
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            output("Error : " + t.message)
+        }
+
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            val data = Gson().fromJson(text, MarketPricesItem::class.java)
+            lifecycleScope.launch {
+                priceAdapter.updateNewModelItem(data)
+            }
+        }
+
+        private fun output(txt: String) {
+            Log.v("gw", txt)
         }
     }
 }

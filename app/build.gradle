@@ -71,4 +71,13 @@ dependencies {
     /* Kotlin Coroutine */
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+
+    implementation 'com.tinder.scarlet:scarlet:0.1.12'
+    implementation "android.arch.persistence.room:rxjava2:1.1.1"
+
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+
+//    //moko-socket-io
+//    implementation("dev.icerock.moko:socket-io:0.3.0")
+//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
 }

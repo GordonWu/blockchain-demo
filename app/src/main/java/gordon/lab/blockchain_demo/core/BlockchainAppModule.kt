@@ -1,6 +1,7 @@
 package gordon.lab.blockchain_demo.core
 
 import android.util.Log
+import com.tinder.scarlet.Scarlet
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,5 +44,6 @@ object BlockchainAppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(BlockchainApi::class.java)
+
     }
 }
