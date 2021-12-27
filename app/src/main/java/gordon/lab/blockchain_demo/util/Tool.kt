@@ -18,7 +18,7 @@ object Tool {
     }
 
     fun PriceTrim(s: String) :String {
-        val df = DecimalFormat("##0.00")
+        val df = DecimalFormat("###,##0.00")
         return df.format(s.toFloatOrNull())
     }
 }
