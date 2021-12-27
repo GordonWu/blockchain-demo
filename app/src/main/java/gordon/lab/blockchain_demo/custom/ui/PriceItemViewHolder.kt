@@ -3,7 +3,6 @@ package gordon.lab.blockchain_demo.custom.ui
 import androidx.recyclerview.widget.RecyclerView
 import gordon.lab.blockchain_demo.data.model.MarketPricesItem
 import gordon.lab.blockchain_demo.databinding.RowPriceItemBinding
-import gordon.lab.blockchain_demo.util.Tool.PriceTrim
 import gordon.lab.blockchain_demo.util.Tool.getDateTime
 import gordon.lab.blockchain_demo.util.Tool.priceTrim
 
